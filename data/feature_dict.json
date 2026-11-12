@@ -1,0 +1,7 @@
+{
+  "company_standards": {
+    "dowel_hole": { "shape": "cylinder", "diameter_max": 8.2, "depth": 15.0 },
+    "dado_groove": { "shape": "pocket", "width_range": [5.0, 10.0], "description": "Shelf housing groove" },
+    "shelf_pin_hole": { "shape": "cylinder", "diameter": 5.0, "depth": 10.0 }
+  }
+}
