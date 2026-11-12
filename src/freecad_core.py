@@ -1,8 +1,13 @@
 import os
+import sys
+
+FREECADPATH = '/home/ann1/Downloads/soft/freeCADunpacked/freecad114_decompressed/usr/bin';
+sys.path.append(FREECADPATH);
 
 try:
     import FreeCAD
     import Part
+    sys.exit('FREECAD NOT FOUND!');
     FREECAD_AVAILABLE = True
 except ImportError:
     FREECAD_AVAILABLE = False
@@ -71,3 +76,17 @@ def get_document_tree(file_path: str) -> dict:
             document_tree["root_objects"].append(node)
 
     return document_tree
+
+def rename_cad_object(file_path: str, old_name: str, new_name: str) -> bool:
+    """Renames an object label inside the FreeCAD document."""
+    if not FREECAD_AVAILABLE:
+        print(f"[MOCK] Renamed {old_name} to {new_name} in {file_path}")
+        return True
+
+    doc = FreeCAD.open(file_path)
+    obj = doc.getObject(old_name)
+    if obj:
+        obj.Label = new_name
+        doc.save()
+        return True
+    return False
