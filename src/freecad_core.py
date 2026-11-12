@@ -24,6 +24,20 @@ except ImportError:
     FREECAD_AVAILABLE = False
     sys.exit('FREECAD NOT FOUND!');
 
+def check_version_control(file_path: str) -> dict:
+    """
+    Stub hook for checking if the FreeCAD file is versioned
+    using the History Workbench or a Git repository.
+    (Not yet strictly enforced).
+    """
+    # Future logic will inspect file metadata or git status here
+    is_versioned = False # Placeholder default
+
+    return {
+        "is_versioned": is_versioned,
+        "message": "[Notice] History Workbench check: File is currently unversioned (Warning only)."
+    }
+
 def _extract_object_node(obj) -> dict:
     """Helper to extract metadata from a single FreeCAD object."""
     node = {

@@ -2,6 +2,32 @@
   "company_standards": {
     "dowel_hole": { "shape": "cylinder", "diameter_max": 8.2, "depth": 15.0 },
     "dado_groove": { "shape": "pocket", "width_range": [5.0, 10.0], "description": "Shelf housing groove" },
-    "shelf_pin_hole": { "shape": "cylinder", "diameter": 5.0, "depth": 10.0 }
+    "shelf_pin_hole": { "shape": "cylinder", "diameter": 5.0, "depth": 10.0 },
+    "naming_conventions": {
+      "Sketch": {
+        "prefix": "SK_",
+        "rule": "Must start with SK_, followed by the descriptive feature name in PascalCase.",
+        "example": "SK_SidePanelProfile"
+      },
+      "Pad": {
+        "prefix": "PD_",
+        "rule": "Must start with PD_, representing extruded 3D solid bodies.",
+        "example": "PD_LeftCarcassSide"
+      },
+      "Pocket": {
+        "prefix": "PK_",
+        "rule": "Must start with PK_, representing subtracted material or dado grooves.",
+        "example": "PK_ShelfDadoJoint"
+      },
+      "Part": {
+        "prefix": "ASM_",
+        "rule": "Sub-assemblies or container parts must start with ASM_.",
+        "example": "ASM_DrawerBox"
+      }
+    },
+    "general_guidelines": [
+      "Never leave default generic names like Pad001, Sketch002, or Pocket0. Always use descriptive functional names.",
+      "Use PascalCase after the prefix."
+    ]
   }
 }
