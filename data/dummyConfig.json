@@ -1,4 +1,5 @@
 {
-    "inferenceURL":"",
-    "API_KEY":""
+    "base_url": "",
+    "api_key": "",
+    "model_name": ""
 }

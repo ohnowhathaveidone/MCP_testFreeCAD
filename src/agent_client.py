@@ -23,11 +23,13 @@ async def run_cad_audit_agent():
         api_key=config.get("api_key", "dummy-key"),
         base_url=config.get("base_url")
     )
-    model_name = config.get("model_name", "llama3")
+    model_name = config.get("model_name", "qwen3.8-flash-next")
 
     # Define parameters to launch our MCP Server locally using FreeCAD's Python
     server_params = StdioServerParameters(
-        command="./squashfs-root/usr/bin/python",
+        #command="./squashfs-root/usr/bin/python",
+        #args=["src/mcp_server.py"],
+        command="python",
         args=["src/mcp_server.py"],
         env=None
     )
