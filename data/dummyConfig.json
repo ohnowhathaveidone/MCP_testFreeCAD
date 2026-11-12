@@ -1,5 +1,6 @@
 {
     "base_url": "",
     "api_key": "",
-    "model_name": ""
+    "model_name": "",
+    "freecad_path": ""
 }

@@ -9,4 +9,4 @@ uv pip install -r requirements.txt
 cp data/dummyConfig.json data/config.json  
 
 adapt config  
-NOTE: config.json is in .giignore by default  
+NOTE: config.json is in .gitignore by default  
