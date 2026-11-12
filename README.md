@@ -26,7 +26,7 @@ for local ollama deployments (not yet tested):
 }  
 
 ## run (in venv)  
-python ./src/agent_client.py  
+python ./src/main.py  
 
 ## TODO  
 - let user load freeCAD file  
