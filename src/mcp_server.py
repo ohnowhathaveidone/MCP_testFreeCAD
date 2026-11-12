@@ -6,7 +6,7 @@ from freecad_core import get_document_tree, rename_cad_object
 mcp = FastMCP(name="WoodCAD Inspector Server")
 
 # Define path to the sample CAD file and company standards
-CAD_FILE_PATH = "data/sample_cabinet.FCStd"
+CAD_FILE_PATH = "data/mount_trispector_to_kuka.FCStd"
 DICT_FILE_PATH = "data/company_feature_dict.json"
 
 # --- MCP TOOLS (Actions the Agent Can Call) ---

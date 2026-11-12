@@ -1,16 +1,16 @@
 import os
 import sys
 
-FREECADPATH = '/home/ann1/Downloads/soft/freeCADunpacked/freecad114_decompressed/usr/bin';
+FREECADPATH = '/home/ann1/Downloads/soft/freeCADunpacked/freecad114_decompressed/usr/lib';
 sys.path.append(FREECADPATH);
 
 try:
     import FreeCAD
     import Part
-    sys.exit('FREECAD NOT FOUND!');
     FREECAD_AVAILABLE = True
 except ImportError:
     FREECAD_AVAILABLE = False
+    sys.exit('FREECAD NOT FOUND!');
 
 def _extract_object_node(obj) -> dict:
     """Helper to extract metadata from a single FreeCAD object."""
