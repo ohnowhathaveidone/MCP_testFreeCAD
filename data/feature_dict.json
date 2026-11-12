@@ -23,6 +23,16 @@
         "prefix": "ASM_",
         "rule": "Sub-assemblies or container parts must start with ASM_.",
         "example": "ASM_DrawerBox"
+      },
+      "Chamfer": {
+        "prefix": "CH_",
+        "rule": "Must start with CH_, representig a chamfered edge.",
+        "example": "CH_EdgeOnBase"
+      },
+      "Fillet": {
+        "prefix": "FL_",
+        "rule": "Must start with FL_, representig a rounded inner or outer corner.",
+        "example": "FL_EdgeTop"
       }
     },
     "general_guidelines": [
