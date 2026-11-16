@@ -1,179 +1,70 @@
 ## MARKDOWN_REPORT
 
-# FreeCAD Model Tree Audit: `mount_trispector_to_kuka`
+# FreeCAD Model Audit — `bearing_13x3x5`
 
 ## Executive Summary
+The model appears to represent a simple bearing-like part with:
+- Outer diameter: **13 mm**
+- Bore diameter: **3 mm**
+- Width / thickness: **5 mm**
 
-The model is a single `PartDesign::Body` containing 20 child features. The feature sequence is logically coherent: a base pad is created, followed by mounting holes, washer sinks, relief pockets, a mirrored relief, mass relief, cutaway, and a chamfer.
+The geometry is internally consistent, but the model tree violates the company naming standard because most objects retain default generic names such as `Body`, `Sketch`, `Pad`, `Sketch001`, and `Pocket`.
 
-However, the model tree is **not compliant** with the company naming standards.
+Feature-specific standards for dowel holes, dado grooves, and shelf pin holes are **not applicable** to this model.
 
-- **Naming compliance:** 0 / 21 objects currently meet the required prefix and PascalCase convention.
-- **Default generic names:** Multiple objects still use default names such as `Sketch`, `Pad`, `Pocket`, `Pocket001`, `Chamfer`, and `Mirrored`.
-- **Label compliance:** Existing labels are descriptive but use lowercase, underscores, abbreviations, or missing required prefixes.
-- **Dimensional standards:** No dowel holes, dado grooves, or shelf pin holes are explicitly identifiable from the tree metadata. Therefore, the dimensional standards cannot be verified from the provided data.
+---
 
-## Scope and Limitations
+## Naming Compliance Findings
 
-This audit is based on the provided model tree metadata, including object names, labels, types, and bounding boxes.
+| Object | Type | Current Name / Label | Issue | Proposed Name | Standard Basis |
+|---|---:|---|---|---|---|
+| `Body` | `PartDesign::Body` | `Body` | Generic container name. | `ASM_Bearing` | Container / part objects should use `ASM_` prefix. |
+| `Sketch` | `Sketcher::SketchObject` | `Sketch` | Generic sketch name. | `SK_BearingOuterProfile` | Sketches must use `SK_` prefix and descriptive PascalCase name. |
+| `Pad` | `PartDesign::Pad` | `Pad` | Generic pad name. | `PD_BearingBody` | Pads must use `PD_` prefix and descriptive PascalCase name. |
+| `Sketch001` | `Sketcher::SketchObject` | `Sketch001` | Generic sketch name. | `SK_BearingBoreProfile` | Sketches must use `SK_` prefix and descriptive PascalCase name. |
+| `Pocket` | `PartDesign::Pocket` | `Pocket` | Generic pocket name. | `PK_BearingBore` | Pockets must use `PK_` prefix and descriptive PascalCase name. |
+| `Local_CS` | `PartDesign::CoordinateSystem` | `Local_CS` / `center1` | Generic coordinate system name. | `CS_Center1` | No explicit company prefix is defined for coordinate systems; `CS_` is proposed as a descriptive prefix. |
+| `Local_CS001` | `PartDesign::CoordinateSystem` | `Local_CS001` / `center2` | Generic coordinate system name. | `CS_Center2` | No explicit company prefix is defined for coordinate systems; `CS_` is proposed as a descriptive prefix. |
 
-Limitations:
+---
 
-- The tree does not expose sketch dimensions, hole diameters, pocket depths, or groove widths.
-- Pocket bounding boxes appear to report the parent body extents rather than the localized pocket extents.
-- Therefore, the following standards cannot be fully validated from the tree alone:
-  - Dowel hole diameter and depth.
-  - Dado groove width.
-  - Shelf pin hole diameter and depth.
+## Geometry Interpretation
 
-## Dimensional Standards Audit
+### Outer Body
+- `Sketch` bounding box: **13.0 × 13.0 × 0.0**
+- `Pad` bounding box: **13.0 × 13.0 × 5.0**
 
-| Standard | Applicable? | Finding | Recommended Action |
-|---|---:|---|---|
-| `dowel_hole` | Not identified | No explicit dowel holes are identifiable from the tree. | If any cylindrical holes are dowel holes, verify diameter ≤ 8.2 mm and depth = 15.0 mm. |
-| `dado_groove` | Not identified | Pockets appear to be mounting holes, washer sinks, reliefs, or cutaways, not shelf housing grooves. | If any pocket is intended as a shelf dado, verify width is between 5.0 mm and 10.0 mm. |
-| `shelf_pin_hole` | Not identified | No shelf pin holes are identifiable from the tree. | If shelf pin holes are present, verify diameter = 5.0 mm and depth = 10.0 mm. |
-| `Fillet` | Not present | No `FL_` fillet objects are present. | No action required unless fillets are required by design intent. |
-| `Chamfer` | Present | One chamfer exists but uses a noncompliant generic name. | Rename to `CH_PrintBaseChamfer`. |
+This indicates the first sketch defines the outer circular profile, and the pad extrudes it to a **5 mm** thickness.
 
-## Naming Convention Audit
+### Inner Bore
+- `Sketch001` bounding box: **3.0 × 3.0 × 0.0**
+- `Pocket` bounding box: **13.0 × 13.0 × 5.0**
 
-The following table audits the internal object names and labels against the company standards.
+This indicates the second sketch defines a **3 mm** bore profile, and the pocket subtracts the bore through the bearing body.
 
-| Internal Name | Current Label | Type | Status | Issue | Proposed Name |
-|---|---|---|---|---|---|
-| `Body` | `Body` | `PartDesign::Body` | Non-compliant | Generic container name; should use `ASM_` if treated as a container part. | `ASM_MountTrispectorToKUKA` |
-| `Sketch` | `Sketch` | `Sketcher::SketchObject` | Non-compliant | Default generic sketch name; missing `SK_` prefix. | `SK_BaseProfile` |
-| `Pad` | `BASE` | `PartDesign::Pad` | Non-compliant | Default generic pad name; label is uppercase, not PascalCase; missing `PD_` prefix. | `PD_BasePlate` |
-| `Sketch001` | `sketch_mount2KUKA` | `Sketcher::SketchObject` | Non-compliant | Default generic sketch name; label uses lowercase and underscores; missing `SK_` prefix. | `SK_MountToKUKAHoles` |
-| `Pocket` | `mount2KUKA_throughholes` | `PartDesign::Pocket` | Non-compliant | Default generic pocket name; label uses lowercase and underscores; missing `PK_` prefix. | `PK_MountToKUKAThroughHoles` |
-| `Sketch002` | `sketch_mount2KUKA_washers` | `Sketcher::SketchObject` | Non-compliant | Default generic sketch name; label uses lowercase and underscores; missing `SK_` prefix. | `SK_MountToKUKAWasherSinks` |
-| `Pocket001` | `mount2KUKA_washersSink` | `PartDesign::Pocket` | Non-compliant | Default generic pocket name; label uses lowercase and underscores; missing `PK_` prefix. | `PK_MountToKUKAWasherSinks` |
-| `Sketch003` | `sketch_mount2trispector` | `Sketcher::SketchObject` | Non-compliant | Default generic sketch name; label uses lowercase and underscores; missing `SK_` prefix. | `SK_MountToTrispectorHoles` |
-| `Pocket002` | `mount2Trispector` | `PartDesign::Pocket` | Non-compliant | Default generic pocket name; label uses lowercase and underscores; missing `PK_` prefix. | `PK_MountToTrispectorHoles` |
-| `Sketch004` | `sketch_mount2Trispector_washers` | `Sketcher::SketchObject` | Non-compliant | Default generic sketch name; label uses lowercase and underscores; missing `SK_` prefix. | `SK_MountToTrispectorWasherSinks` |
-| `Pocket003` | `mount2Trispector_washers` | `PartDesign::Pocket` | Non-compliant | Default generic pocket name; label uses lowercase and underscores; missing `PK_` prefix. | `PK_MountToTrispectorWasherSinks` |
-| `Sketch005` | `sketch_reliefTrispector` | `Sketcher::SketchObject` | Non-compliant | Default generic sketch name; label uses lowercase and underscores; missing `SK_` prefix. | `SK_ReliefCenter` |
-| `Pocket004` | `relief_center` | `PartDesign::Pocket` | Non-compliant | Default generic pocket name; label uses lowercase and underscores; missing `PK_` prefix. | `PK_ReliefCenter` |
-| `Sketch006` | `sketch_relief_outer` | `Sketcher::SketchObject` | Non-compliant | Default generic sketch name; label uses lowercase and underscores; missing `SK_` prefix. | `SK_ReliefOuter` |
-| `Pocket005` | `relief_outer_base` | `PartDesign::Pocket` | Non-compliant | Default generic pocket name; label uses lowercase and underscores; missing `PK_` prefix. | `PK_ReliefOuterBase` |
-| `Mirrored` | `relief_outer_mirr` | `PartDesign::Mirrored` | Advisory | No company prefix is defined for `Mirrored`; current label is abbreviated and generic. | `MIR_ReliefOuter` |
-| `Sketch007` | `sketch_massRelief` | `Sketcher::SketchObject` | Non-compliant | Default generic sketch name; label uses lowercase prefix; missing `SK_` prefix. | `SK_MassRelief` |
-| `Pocket006` | `massRelief` | `PartDesign::Pocket` | Non-compliant | Default generic pocket name; label uses lowercase; missing `PK_` prefix. | `PK_MassRelief` |
-| `Sketch008` | `sketch_cutAway_TrispecMount` | `Sketcher::SketchObject` | Non-compliant | Default generic sketch name; label uses lowercase prefix and abbreviation; missing `SK_` prefix. | `SK_CutAwayTrispectorMount` |
-| `Pocket007` | `cutAway_trispecMount` | `PartDesign::Pocket` | Non-compliant | Default generic pocket name; label uses lowercase and abbreviation; missing `PK_` prefix. | `PK_CutAwayTrispectorMount` |
-| `Chamfer` | `printBaseChamfer` | `PartDesign::Chamfer` | Non-compliant | Default generic chamfer name; label missing `CH_` prefix. | `CH_PrintBaseChamfer` |
+### Coordinate Systems
+- `Local_CS` and `Local_CS001` appear to be center reference coordinate systems.
+- Their bounding boxes are extremely large, which is typical for coordinate system objects.
 
-## Key Findings
+---
 
-### 1. All sketches are noncompliant
+## Feature-Specific Standards Review
 
-Every sketch uses either a default generic internal name or a nonstandard label.
+| Standard | Applicability | Finding |
+|---|---|---|
+| Dowel hole | Not applicable | No dowel hole detected. The bore is approximately **3 mm** diameter and **5 mm** deep, not matching the dowel hole standard of **15 mm** depth. |
+| Dado groove | Not applicable | No shelf housing groove detected. The pocket is a bore, not a dado groove. |
+| Shelf pin hole | Not applicable | No shelf pin hole detected. The bore is approximately **3 mm** diameter and **5 mm** deep, not matching the shelf pin hole standard of **5 mm** diameter and **10 mm** depth. |
+| Chamfer | Not applicable | No chamfer objects detected. |
+| Fillet | Not applicable | No fillet objects detected. |
 
-Examples:
+---
 
-- `Sketch`
-- `Sketch001`
-- `Sketch002`
-- `sketch_mount2KUKA`
-- `sketch_mount2Trispector_washers`
-
-Required pattern:
-
-```text
-SK_DescriptiveFeatureName
-```
-
-### 2. The base pad is noncompliant
-
-The pad currently uses the internal name `Pad` and label `BASE`.
-
-Required pattern:
-
-```text
-PD_DescriptiveSolidName
-```
-
-Recommended:
-
-```text
-PD_BasePlate
-```
-
-### 3. All pockets are noncompliant
-
-Every pocket uses a default generic internal name or a nonstandard label.
-
-Examples:
-
-- `Pocket`
-- `Pocket001`
-- `Pocket002`
-- `mount2KUKA_throughholes`
-- `relief_center`
-- `massRelief`
-
-Required pattern:
-
-```text
-PK_DescriptiveSubtractiveFeatureName
-```
-
-### 4. The chamfer is noncompliant
-
-The chamfer uses the default internal name `Chamfer` and label `printBaseChamfer`.
-
-Required pattern:
-
-```text
-CH_DescriptiveChamferName
-```
-
-Recommended:
-
-```text
-CH_PrintBaseChamfer
-```
-
-### 5. The root body should be renamed if treated as a container part
-
-The root object is a `PartDesign::Body`. If the company standard treats container parts as requiring the `ASM_` prefix, the body should be renamed.
-
-Recommended:
-
-```text
-ASM_MountTrispectorToKUKA
-```
-
-If the standard strictly applies `ASM_` only to `Part` containers, this rename may be treated as advisory.
-
-### 6. `Mirrored` has no defined company prefix
-
-The company standards do not define a prefix for `Mirrored`. The current label `relief_outer_mirr` is abbreviated and not fully descriptive.
-
-A proposed extension is:
-
-```text
-MIR_ReliefOuter
-```
-
-If `MIR_` is not approved, use a descriptive PascalCase name such as:
-
-```text
-ReliefOuterMirror
-```
-
-## Recommended Actions
-
-1. Rename all sketches to use the `SK_` prefix and PascalCase feature names.
-2. Rename the pad to `PD_BasePlate`.
-3. Rename all pockets to use the `PK_` prefix and descriptive PascalCase names.
-4. Rename the chamfer to `CH_PrintBaseChamfer`.
-5. Rename the root body to `ASM_MountTrispectorToKUKA` if container parts must use the `ASM_` prefix.
-6. Decide whether to adopt `MIR_` as a standard prefix for mirrored features.
-7. Verify hole and pocket dimensions if any features are intended to satisfy dowel, dado, or shelf pin standards.
-8. Ensure no default generic names such as `Sketch001`, `Pocket001`, `Pad`, `Pocket`, `Chamfer`, or `Mirrored` remain in the final model tree.
-9. Apply the proposed names to both internal object names and user-visible labels where possible.
+## Recommendations
+1. Rename all generic feature objects using the proposed names.
+2. Ensure all new names use PascalCase after the required prefix.
+3. If coordinate systems are to be governed by naming standards, formally add a prefix such as `CS_` to the company standard.
+4. Consider adopting a document naming standard if not already defined; the current document name `bearing_13x3x5` is descriptive but uses lowercase.
 
 ## Execution Status
-Status: **Approved & Applied** (21 objects renamed).
+Status: **Approved & Applied** (7 objects renamed).
