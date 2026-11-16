@@ -65,7 +65,7 @@ def generate_advanced_doc(source_dir=".", output_file="documentation.md"):
     file_header_added = False
 
     for node in ast.walk(tree):
-      if isinstance(node, (ast.FunctionDef, ast.ClassDef)):
+      if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
         if node.name.startswith("_") and node.name != "__init__":
           continue
 

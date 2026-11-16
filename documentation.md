@@ -3,6 +3,18 @@
 ---
 
 
+## `src/agent_engine.py`
+
+### Function: `run_cad_analysis(session, config) -> tuple[str, list[dict]]`
+
+
+Connects via MCP session, fetches tree & standards,
+and asks the LLM for a structured JSON proposal + Markdown report.
+
+
+---
+
+
 ## `src/approval_controller.py`
 
 ### Function: `request_user_approval(proposals: list[dict]) -> bool`
@@ -51,6 +63,17 @@ supporting both single bodies and complex assemblies.
 
 
 Renames an object label inside the FreeCAD document, matching by Name or Label.
+
+
+---
+
+
+## `src/main.py`
+
+### Function: `main()`
+
+
+_No description provided._
 
 
 ---
