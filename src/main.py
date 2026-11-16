@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import asyncio
 from mcp import ClientSession, StdioServerParameters
@@ -9,17 +10,18 @@ from approval_controller import request_user_approval
 
 from freecad_core import check_version_control
 
-def load_config() -> dict:
-    """Loads LLM connection settings from the data folder."""
-    config_path = "data/config.json"
-    if not os.path.exists(config_path):
-        raise FileNotFoundError(f"Configuration file not found at {config_path}. Please create one.")
-
-    with open(config_path, "r") as f:
-        return json.load(f)
+from config_loader import load_config
 
 async def main():
     config = load_config()
+
+    if len(sys.argv)>1:
+        CAD_FILE_PATH = sys.argv[1];
+    else:
+        CAD_FILE_PATH = "data/mount_trispector_to_kuka.FCStd";
+
+    server_env = os.environ.copy();
+    server_env["CAD_FILE_PATH"] = CAD_FILE_PATH;
 
     # Define parameters to launch our MCP Server locally using FreeCAD's Python
     server_params = StdioServerParameters(
@@ -27,7 +29,7 @@ async def main():
         #args=["src/mcp_server.py"],
         command=".venv/bin/python3.11",
         args=["src/mcp_server.py"],
-        env=None
+        env=server_env
     )
     # --- History Workbench Check Hook (Non-blocking warning) ---
     # We import or call the core check function to see status

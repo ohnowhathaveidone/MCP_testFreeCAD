@@ -1,3 +1,4 @@
+import os
 import json
 from fastmcp import FastMCP
 from freecad_core import get_document_tree, rename_cad_object
@@ -6,7 +7,7 @@ from freecad_core import get_document_tree, rename_cad_object
 mcp = FastMCP(name="WoodCAD Inspector Server")
 
 # Define path to the sample CAD file and company standards
-CAD_FILE_PATH = "data/mount_trispector_to_kuka.FCStd"
+CAD_FILE_PATH = os.environ.get("CAD_FILE_PATH", "data/mount_trispector_to_kuka.FCStd");#"data/mount_trispector_to_kuka.FCStd"
 DICT_FILE_PATH = "data/feature_dict.json"
 
 # --- MCP TOOLS (Actions the Agent Can Call) ---
@@ -40,4 +41,5 @@ def get_company_standards() -> str:
 
 if __name__ == "__main__":
     # Runs the server using standard input/output (STDIO) for local agent communication
-    mcp.run()
+    # mcp.run(transport="http", port=8000)
+    mcp.run();

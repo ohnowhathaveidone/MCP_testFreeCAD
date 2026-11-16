@@ -2,14 +2,16 @@ import json
 import os
 import sys
 
-def load_config():
-    """Loads LLM connection settings from the data folder."""
-    config_path = "data/config.json"
-    if not os.path.exists(config_path):
-        raise FileNotFoundError(f"Configuration file not found at {config_path}. Please create one.")
+from config_loader import load_config
 
-    with open(config_path, "r") as f:
-        return json.load(f)
+# def load_config():
+#     """Loads LLM connection settings from the data folder."""
+#     config_path = "data/config.json"
+#     if not os.path.exists(config_path):
+#         raise FileNotFoundError(f"Configuration file not found at {config_path}. Please create one.")
+#
+#     with open(config_path, "r") as f:
+#         return json.load(f)
 
 config = load_config();
 FREECADPATH = config.get('freecad_path', '');
@@ -104,15 +106,45 @@ def get_document_tree(file_path: str) -> dict:
     return document_tree
 
 def rename_cad_object(file_path: str, old_name: str, new_name: str) -> bool:
-    """Renames an object label inside the FreeCAD document."""
+    """Renames an object label inside the FreeCAD document, matching by Name or Label."""
     if not FREECAD_AVAILABLE:
         print(f"[MOCK] Renamed {old_name} to {new_name} in {file_path}")
         return True
 
-    doc = FreeCAD.open(file_path)
-    obj = doc.getObject(old_name)
-    if obj:
-        obj.Label = new_name
+    doc_name = os.path.splitext(os.path.basename(file_path))[0]
+
+    # Check if document is already open in FreeCAD session
+    doc = FreeCAD.getDocument(doc_name) if doc_name in FreeCAD.listDocuments() else None
+
+    if not doc:
+        if os.path.exists(file_path):
+            print(f"[Core] Opening document from path: {file_path}", file=sys.stderr)
+            doc = FreeCAD.open(file_path)
+        else:
+            print(f"[Core] Error: File path does not exist -> {file_path}", file=sys.stderr)
+            return False
+
+    print(f"[Core Debug] Searching for target '{old_name}' in document '{doc.Name}' (Total objects: {len(doc.Objects)})", file=sys.stderr)
+    # Find object by internal Name first, then fallback to matching Label
+    target_obj = None
+    try:
+        target_obj = doc.getObject(old_name)
+    except Exception:
+        pass
+
+    if not target_obj:
+        for obj in doc.Objects:
+            print(f"  - Object Name: '{obj.Name}' | Label: '{obj.Label}'", file=sys.stderr)
+            if obj.Label == old_name:
+                target_obj = obj
+                break
+
+    if target_obj:
+        print(f"[Core] Successfully matched '{old_name}' -> Renaming to '{new_name}'", file=sys.stderr)
+        target_obj.Label = new_name
+        doc.recompute()
         doc.save()
         return True
+
+    print(f"[Core] Error: Could not find object matching '{old_name}'", file=sys.stderr)
     return False
